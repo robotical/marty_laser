@@ -1,4 +1,4 @@
-
+laser_video_out: false
 lower_threshold: [43, 70, 6]
 upper_threshold: [82, 255, 255]
 kernel_val: 5

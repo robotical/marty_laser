@@ -29,6 +29,7 @@ class LaserNode(object):
         self.lower_threshold = rospy.get_param("/lower_threshold", [43, 70, 6])
         self.upper_threshold = rospy.get_param("/upper_threshold", [82, 255, 255])
         self.kernel_val = rospy.get_param("/kernel_val", 0)
+        self.video_out_param = rospy.get_param("/laser_video_out", False)
 
         self.camera_sub = rospy.Subscriber(
             "/marty/camera/image/compressed", sensor_msgs.msg.CompressedImage, self.image_cb)
@@ -78,6 +79,9 @@ class LaserNode(object):
 
     def return_rate(self):
         return self.rate
+
+    def return_video_out_param(self):
+        return self.video_out_param
 
     def image_cb(self, data):
 
@@ -136,21 +140,22 @@ class LaserNode(object):
         target_distance = 0.2389192 + (4512335 - 0.2389192)/(1 + (y_coord/127.198)**22.29046)
         return target_distance
 
-    def update_windows(self, trackbars = False):
-        cv2.imshow("BGR8 Image", self.bgr8_img)
-        # cv2.imshow("BGR8 Image inv", self.bgr8_img_inv)
-        cv2.imshow("Mask Image", self.mask_img)
+    def update_windows(self, show_windows = False, trackbars = False):
+        if show_windows is True:
+            cv2.imshow("BGR8 Image", self.bgr8_img)
+            # cv2.imshow("BGR8 Image inv", self.bgr8_img_inv)
+            cv2.imshow("Mask Image", self.mask_img)
 
-        if trackbars is True:
-            cv2.createTrackbar('H-L1','Mask Image',self.lower_bound[0],180, self.modify_lower_h_1)
-            cv2.createTrackbar('S-L1','Mask Image',self.lower_bound[1],255, self.modify_lower_s_1)
-            cv2.createTrackbar('V-L1','Mask Image',self.lower_bound[2],255, self.modify_lower_v_1)
-            cv2.createTrackbar('H-U1','Mask Image',self.upper_bound[0],180, self.modify_upper_h_1)
-            cv2.createTrackbar('S-U1','Mask Image',self.upper_bound[1],255, self.modify_upper_s_1)
-            cv2.createTrackbar('V-U1','Mask Image',self.upper_bound[2],255, self.modify_upper_v_1)
-            cv2.createTrackbar('Kernel size','Mask Image',len(self.kernel),50, self.modify_kernel)
+            if trackbars is True:
+                cv2.createTrackbar('H-L1','Mask Image',self.lower_bound[0],180, self.modify_lower_h_1)
+                cv2.createTrackbar('S-L1','Mask Image',self.lower_bound[1],255, self.modify_lower_s_1)
+                cv2.createTrackbar('V-L1','Mask Image',self.lower_bound[2],255, self.modify_lower_v_1)
+                cv2.createTrackbar('H-U1','Mask Image',self.upper_bound[0],180, self.modify_upper_h_1)
+                cv2.createTrackbar('S-U1','Mask Image',self.upper_bound[1],255, self.modify_upper_s_1)
+                cv2.createTrackbar('V-U1','Mask Image',self.upper_bound[2],255, self.modify_upper_v_1)
+                cv2.createTrackbar('Kernel size','Mask Image',len(self.kernel),50, self.modify_kernel)
 
-        cv2.waitKey(5)
+            cv2.waitKey(5)
 
     def laser_pub_data(self, data):
         self.laser_dist_pub_.publish(data)
@@ -168,9 +173,9 @@ def main():
     (camera_width, camera_height, camera_framerate) = laser.return_camera_info()
     rospy.loginfo("Camera info (x, y, framerate): %s, %s, %s",
                   camera_width, camera_height, camera_framerate)
-
+    video_out = laser.return_video_out_param()
     while rospy.is_shutdown() is not True:
-        laser.update_windows(True)
+        laser.update_windows(video_out, True)
         node_rate.sleep()
 
 
