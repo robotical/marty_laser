@@ -2,8 +2,6 @@
 
 <launch>
   <rosparam file="$(find marty_laser)/cfg/laser_params.yaml" command="load" />
-
   <node pkg="marty_laser" type="marty_laser.py" name="marty_laser" output="screen"/>
-  <!-- <node name="reconfigure_gui" pkg="dynamic_reconfigure" type="reconfigure_gui" /> -->
 
 </launch>

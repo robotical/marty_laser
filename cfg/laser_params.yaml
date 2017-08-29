@@ -1,6 +1,46 @@
+# Configuration file for marty_laser
+# ----------------------------------
+
+# True to show video feed, false to not show
 laser_video_out: false
-lower_threshold: [43, 70, 6]
-upper_threshold: [82, 255, 255]
+# True to show configuration trackbars. Use to adjust HSV values.
+threshold_config: false
+
+# Choose operating mode, currently only "dot" is supported
+laser_type: "dot" # valid types are: "dot", "line"
+
+# "dot" parameters
+laser_max_range: 3
+laser_min_range: 0.2
+
+# Error for dot detection in the x-axis
+horizontal_dot_error: 10
+# Minimum radius of detected dot
+dot_min_radius: 1
+
+# HSV values for thresholding. Use INVERTED values i.e. use cyan values for red
+# NOTE: value ranges are: H (0 - 179), S (0 - 255), V (0 - 255)
+lower_threshold: [45, 70, 0]
+upper_threshold: [100, 255, 214]
+# Kernel size for morphology operation
 kernel_val: 5
 
+# LaserScan message parameters
+frame_id: "/odom"
+scan_time: 2.0
+angle_min: -90
+angle_max: 90
+range_min: 0.2
+range_max: 3
+
+# old threshold values
+# lower_threshold: [43, 70, 6]
+# upper_threshold: [82, 255, 255]
+# lower_threshold: [0, 45, 0]
+# upper_threshold: [100, 255, 214]
+
+# Original range estimation function obtained from experimental data
+# DO NOT UNCOMMENT
+# ----------------------------------------------------------------
 # y = 0.2389192 + (4512335 - 0.2389192)/(1 + (x/127.198)^22.29046)
+# ----------------------------------------------------------------
